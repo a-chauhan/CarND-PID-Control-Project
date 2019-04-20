@@ -59,40 +59,20 @@ More information is only accessible by people who are already enrolled in Term 2
 of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
 for instructions and the project rubric.
 
-## Hints!
+## Parameter tuning:
+Manually, by trial and error method.
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+## Theory
+PID stands for Proportional, Integral, Derivative.
+One the vehicle is following the path/line, it may be away from the line, either on the left side or right side. To put the car on the line, we need to decrease this displancement also know as CTE(Cross track error). 
 
-## Call for IDE Profiles Pull Requests
+P: Proportional Control: How much we need to turn the steering is proportional to the CTE. when putting into equation, steering angle becomes cte * P_gain. We need to tune this parameter as it's value can drastically effect the vehicle movement.
+The performance is better with higher gain. with low gain, it overshoots to the other side of the road too much. But proportional control alone is not good enough. And there is also limit on high gain, just to avoid going system out of control.
 
-Help your fellow students!
+D: Derivative Control: To futher improve the behaviour, we can check on the rate of change of CTE. This will make the transition more soother. and eventually overshooting will be low. But there will be a little bit overshooting. So the steering angle equation becomes: steering _angle = cte * P_gain + dCTE/dt * D_gain
+If the derivative is low, the system will be underdamped and still oscillate. if too high, it will take too much time to correct the offset. What we need is the medium value, good for our purpose. But again there are still some other forces in nature, that can deviate our car from following the line. It can be on one side of the line more time comparing to the time spent on the other side of the line. We need to fix this. The solution is easy, we need to just take in account the sum of errors so far.
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+I: Integral Control: It is the sum of all the CTE and find whether it is spending most of the time on one side of the trajectory. Then we need to fix this by adding another value to the steering angle:
+steering_angle = cte * P_gain + dCTE/dt * D_gain + CTE_sum * I_gain
+If the I_gain is too high, it will exagerate the CTE_error and car will start to oscillate, if too low, it will take too long to come back to the line. What we need is a good I_gain, that will bring the car back to track efficiently.
 
