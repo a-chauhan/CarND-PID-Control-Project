@@ -76,3 +76,12 @@ I: Integral Control: It is the sum of all the CTE and find whether it is spendin
 steering_angle = cte * P_gain + dCTE/dt * D_gain + CTE_sum * I_gain
 If the I_gain is too high, it will exagerate the CTE_error and car will start to oscillate, if too low, it will take too long to come back to the line. What we need is a good I_gain, that will bring the car back to track efficiently.
 
+## Values
+P_gain = 0.2;
+I_gain = 0.00001;
+D_gain = 4.0;
+
+## Video
+https://youtu.be/VMC91-Zq5Qg
+
+
